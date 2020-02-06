@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/screens/home/components/custom_app_bar.dart';
+import './components/custom_card.dart';
+import 'package:todo_app/screens/section/components/custom_checkbox.dart';
 
 class SectionScreen extends StatefulWidget {
   @override
@@ -9,6 +11,7 @@ class SectionScreen extends StatefulWidget {
 class _SectionScreenState extends State<SectionScreen> {
   Alignment alignment = Alignment.centerLeft;
   double widthIndicator = 50;
+  bool value = false;
 
   @override
   Widget build(BuildContext context) {
@@ -21,11 +24,11 @@ class _SectionScreenState extends State<SectionScreen> {
           icon: Icons.arrow_back,
           onLeadingPress: () => Navigator.pop(context)),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            children: <Widget>[
-              Container(
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Container(
                 child: Row(
                   children: <Widget>[
                     _itemsTab(
@@ -61,7 +64,10 @@ class _SectionScreenState extends State<SectionScreen> {
                   ],
                 ),
               ),
-              Stack(
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Stack(
                 children: <Widget>[
                   Container(
                     child: Row(
@@ -91,106 +97,106 @@ class _SectionScreenState extends State<SectionScreen> {
                   )
                 ],
               ),
-              Expanded(
-                child: Column(
-                  children: <Widget>[_fieldTask()],
-                ),
-              )
-            ],
-          ),
+            ),
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.all(20),
+                children: <Widget>[
+                  _fieldTask(
+                      hasNext: true,
+                      dateTime: DateTime(2020, 2, 6, 17, 30),
+                      items: <Widget>[
+                        CustomCard(
+                          task: "Tarefa aleatória 1! boa demais",
+                        ),
+                        CustomCard(
+                          task: "Tarefa aleatória 2!",
+                          isCompleted: true,
+                        ),
+                        CustomCard(
+                          task: "Tarefa aleatória 3!",
+                          isCompleted: true,
+                        )
+                      ]),
+                  _fieldTask(
+                      hasNext: true,
+                      dateTime: DateTime(2020, 2, 6, 18, 0),
+                      items: <Widget>[
+                        CustomCard(
+                          task: "Tarefa aleatória 4!",
+                        ),
+                      ]),
+                  _fieldTask(
+                      hasNext: false,
+                      dateTime: DateTime(2020, 2, 6, 18, 30),
+                      items: <Widget>[
+                        CustomCard(
+                          task: "Tarefa aleatória 5!",
+                        ),
+                        CustomCard(
+                          task: "Tarefa aleatória 6!",
+                        )
+                      ])
+                ],
+              ),
+            )
+          ],
         ),
       ),
     );
   }
 
-  _fieldTask() {
-    return Row(
-      children: <Widget>[
-        Column(
-          children: <Widget>[
-            Flexible(
-                child: Container(
-                    child: Column(
+  _fieldTask({bool hasNext: false, DateTime dateTime, List<Widget> items}) {
+    return Container(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            child: Column(
               children: <Widget>[
-                Icon(
-                  Icons.check,
-                  color: Colors.green,
-                  size: 15,
-                ),
-                SizedBox(
-                  height: 140,
-                  width: 1.5,
-                  child: Container(
-                    alignment: Alignment.centerLeft,
+                CustomCheckBox(
+                    value: value,
                     color: Color(0xFF312E3F),
-                  ),
-                )
+                    onPressed: () {
+                      setState(() {
+                        value = !value;
+                      });
+                    }),
+                hasNext
+                    ? Container(
+                        width: 2,
+                        // height: 50,
+                        color: Color(0xFF312E3F),
+                      )
+                    : Container(),
               ],
-            )))
-          ],
-        ),
-        SizedBox(
-          width: 5,
-        ),
-        Column(
-          children: <Widget>[
-            Flexible(
-                child: Container(
-                    child: Column(
-              children: <Widget>[
-                Text("9:30 am",
-                    style: TextStyle(
-                        fontSize: 10,
-                        fontFamily: "OpenSans",
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600)),
-              ],
-            )))
-          ],
-        ),
-        SizedBox(
-          width: 15,
-        ),
-        Column(
-          children: <Widget>[
-            Card(
-              elevation: 0,
-              child: Container(
-                  padding: EdgeInsets.all(10),
-                  width: 250,
-                  child: Text("Card 1")),
             ),
-            Card(
-              elevation: 0,
+          ),
+          SizedBox(
+            width: 10,
+          ),
+          Container(
+            child: Text(
+                "${dateTime.hour}:${dateTime.minute == 0 ? "00" : dateTime.minute} ${dateTime.hour > 12 ? "pm" : "am"}",
+                style: TextStyle(
+                    fontSize: 10,
+                    fontFamily: "OpenSans",
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600)),
+          ),
+          SizedBox(
+            width: 30,
+          ),
+          Expanded(
               child: Container(
-                  padding: EdgeInsets.all(10),
-                  width: 250,
-                  child: Text("Card 1")),
+            padding: EdgeInsets.only(bottom: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: items,
             ),
-            Card(
-              elevation: 0,
-              child: Container(
-                  padding: EdgeInsets.all(10),
-                  width: 250,
-                  child: Text("Card 1")),
-            ),
-            Card(
-              elevation: 0,
-              child: Container(
-                  padding: EdgeInsets.all(10),
-                  width: 250,
-                  child: Text("Card 1")),
-            ),
-            Card(
-              elevation: 0,
-              child: Container(
-                  padding: EdgeInsets.all(10),
-                  width: 250,
-                  child: Text("Card 1")),
-            )
-          ],
-        )
-      ],
+          )),
+        ],
+      ),
     );
   }
 
