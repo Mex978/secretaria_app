@@ -1,84 +1,81 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/screens/home/components/add_item.dart';
+import 'package:todo_app/screens/home/components/custom_app_bar.dart';
+import 'package:todo_app/screens/home/components/custom_card.dart';
+import 'package:todo_app/screens/home/components/grid_view.dart';
+import 'package:todo_app/screens/section/section_screen.dart';
 
 class HomeScreen extends StatelessWidget {
+  final GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     ThemeData _theme = Theme.of(context);
 
     return Scaffold(
+      key: _key,
+      drawer: Drawer(),
       backgroundColor: _theme.backgroundColor,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(120),
-        child: SafeArea(
-          child: Padding(
-            padding: EdgeInsets.only(left: 10, right: 22),
-            child: Column(
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      InkWell(
-                        onTap: () {},
-                        child: Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Icon(
-                            Icons.menu,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      CircleAvatar(
-                        backgroundColor: Colors.transparent,
-                        backgroundImage: AssetImage("assets/user.jpg"),
-                      )
-                    ],
+      appBar: customAppBar(
+          key: _key, description: "Bem-vindo ao TodoApp", icon: Icons.menu),
+      body: SafeArea(
+          child: Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(left: 20),
+            child: Container(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "Total de 26 tarefas",
+                style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600),
+              ),
+            ),
+          ),
+          Expanded(
+            child: CustomGridView(
+              items: <Widget>[
+                Center(
+                  child: CustomCard(
+                    description: "To Do",
+                    count: "3 items",
+                    icon: Icons.assignment,
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => SectionScreen()));
+                    },
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 12),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        "Olá Usuário,",
-                        style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600),
-                      )
-                    ],
+                Center(
+                  child: CustomCard(
+                    icon: Icons.event_note,
+                    description: "Eventos",
+                    count: "5 items",
+                    onPressed: () {},
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 12),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        "Bem-vindo ao TodoApp",
-                        style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600),
-                      ),
-                    ],
+                Center(
+                  child: CustomCard(
+                    icon: Icons.content_paste,
+                    description: "Notas",
+                    count: "15 items",
+                    onPressed: () {},
+                  ),
+                ),
+                Container(
+                  child: Center(
+                    child: Row(
+                      children: <Widget>[AddItem()],
+                    ),
                   ),
                 )
               ],
             ),
           ),
-        ),
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 22),
-          child: Column(
-            children: <Widget>[Container(color: Colors.red, height: 50)],
-          ),
-        ),
-      ),
+        ],
+      )),
     );
   }
 }
