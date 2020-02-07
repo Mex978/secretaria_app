@@ -103,21 +103,21 @@ class _SectionScreenState extends State<SectionScreen> {
                 padding: const EdgeInsets.all(20),
                 children: <Widget>[
                   _fieldTask(
-                      hasNext: true,
-                      dateTime: DateTime(2020, 2, 6, 17, 30),
-                      items: <Widget>[
-                        CustomCard(
-                          task: "Tarefa aleatória 1! boa demais",
-                        ),
-                        CustomCard(
-                          task: "Tarefa aleatória 2!",
-                          isCompleted: true,
-                        ),
-                        CustomCard(
-                          task: "Tarefa aleatória 3!",
-                          isCompleted: true,
-                        )
-                      ]),
+                          hasNext: true,
+                          dateTime: DateTime(2020, 2, 6, 17, 30),
+                          items: <Widget>[
+                            CustomCard(
+                              task: "Tarefa aleatória 1! boa demais",
+                            ),
+                            CustomCard(
+                              task: "Tarefa aleatória 2!",
+                              isCompleted: true,
+                            ),
+                            CustomCard(
+                              task: "Tarefa aleatória 3!",
+                              isCompleted: true,
+                            )
+                          ]),
                   _fieldTask(
                       hasNext: true,
                       dateTime: DateTime(2020, 2, 6, 18, 0),
@@ -147,56 +147,68 @@ class _SectionScreenState extends State<SectionScreen> {
   }
 
   _fieldTask({bool hasNext: false, DateTime dateTime, List<Widget> items}) {
-    return Container(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(
-            child: Column(
-              children: <Widget>[
-                CustomCheckBox(
-                    value: value,
+    return Stack(
+      children: <Widget>[
+        Positioned(
+          top: 16,
+          bottom: 0,
+          left: 8,
+          child: hasNext
+              ? Padding(
+                  padding: const EdgeInsets.only(top: 5.0),
+                  child: Container(
+                    width: 2,
+                    height: 50,
                     color: Color(0xFF312E3F),
-                    onPressed: () {
-                      setState(() {
-                        value = !value;
-                      });
-                    }),
-                hasNext
-                    ? Container(
-                        width: 2,
-                        // height: 50,
+                  ),
+                )
+              : Container(),
+        ),
+        Container(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                child: Column(
+                  children: <Widget>[
+                    CustomCheckBox(
+                        value: value,
                         color: Color(0xFF312E3F),
-                      )
-                    : Container(),
-              ],
-            ),
+                        onPressed: () {
+                          setState(() {
+                            value = !value;
+                          });
+                        })
+                  ],
+                ),
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              Container(
+                child: Text(
+                    "${dateTime.hour}:${dateTime.minute == 0 ? "00" : dateTime.minute} ${dateTime.hour > 12 ? "pm" : "am"}",
+                    style: TextStyle(
+                        fontSize: 10,
+                        fontFamily: "OpenSans",
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600)),
+              ),
+              SizedBox(
+                width: 30,
+              ),
+              Expanded(
+                  child: Container(
+                padding: EdgeInsets.only(bottom: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: items,
+                ),
+              )),
+            ],
           ),
-          SizedBox(
-            width: 10,
-          ),
-          Container(
-            child: Text(
-                "${dateTime.hour}:${dateTime.minute == 0 ? "00" : dateTime.minute} ${dateTime.hour > 12 ? "pm" : "am"}",
-                style: TextStyle(
-                    fontSize: 10,
-                    fontFamily: "OpenSans",
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600)),
-          ),
-          SizedBox(
-            width: 30,
-          ),
-          Expanded(
-              child: Container(
-            padding: EdgeInsets.only(bottom: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: items,
-            ),
-          )),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
