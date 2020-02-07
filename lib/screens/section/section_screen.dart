@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/models/todo_model.dart';
 import 'package:todo_app/screens/home/components/custom_app_bar.dart';
+import 'package:todo_app/screens/section/components/section_today.dart';
+import 'package:todo_app/services/dados_mockados.dart';
 import './components/custom_card.dart';
 import 'package:todo_app/screens/section/components/custom_checkbox.dart';
 
@@ -12,6 +15,7 @@ class _SectionScreenState extends State<SectionScreen> {
   Alignment alignment = Alignment.centerLeft;
   double widthIndicator = 50;
   bool value = false;
+  int page = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +24,7 @@ class _SectionScreenState extends State<SectionScreen> {
     return Scaffold(
       backgroundColor: _theme.backgroundColor,
       appBar: customAppBar(
-          description: "Bem-vindo ao TodoApp",
+          description: "Essa é sua lista de to-do's",
           icon: Icons.arrow_back,
           onLeadingPress: () => Navigator.pop(context)),
       body: SafeArea(
@@ -39,6 +43,7 @@ class _SectionScreenState extends State<SectionScreen> {
                           setState(() {
                             alignment = Alignment.centerLeft;
                             widthIndicator = 50;
+                            page = 0;
                           });
                         }),
                     _itemsTab(
@@ -49,6 +54,7 @@ class _SectionScreenState extends State<SectionScreen> {
                           setState(() {
                             alignment = Alignment.center;
                             widthIndicator = 80;
+                            page = 1;
                           });
                         }),
                     _itemsTab(
@@ -59,6 +65,7 @@ class _SectionScreenState extends State<SectionScreen> {
                           setState(() {
                             alignment = Alignment.centerRight;
                             widthIndicator = 50;
+                            page = 2;
                           });
                         }),
                   ],
@@ -98,117 +105,20 @@ class _SectionScreenState extends State<SectionScreen> {
                 ],
               ),
             ),
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.all(20),
-                children: <Widget>[
-                  _fieldTask(
-                          hasNext: true,
-                          dateTime: DateTime(2020, 2, 6, 17, 30),
-                          items: <Widget>[
-                            CustomCard(
-                              task: "Tarefa aleatória 1! boa demais",
-                            ),
-                            CustomCard(
-                              task: "Tarefa aleatória 2!",
-                              isCompleted: true,
-                            ),
-                            CustomCard(
-                              task: "Tarefa aleatória 3!",
-                              isCompleted: true,
-                            )
-                          ]),
-                  _fieldTask(
-                      hasNext: true,
-                      dateTime: DateTime(2020, 2, 6, 18, 0),
-                      items: <Widget>[
-                        CustomCard(
-                          task: "Tarefa aleatória 4!",
-                        ),
-                      ]),
-                  _fieldTask(
-                      hasNext: false,
-                      dateTime: DateTime(2020, 2, 6, 18, 30),
-                      items: <Widget>[
-                        CustomCard(
-                          task: "Tarefa aleatória 5!",
-                        ),
-                        CustomCard(
-                          task: "Tarefa aleatória 6!",
-                        )
-                      ])
-                ],
-              ),
-            )
+            if (page == 0)
+              SectionToday(
+                  items: todos.where((todo) {
+                DateTime today = DateTime.now();
+                bool isToday = todo.inicio.year == today.year
+                    ? todo.inicio.month == today.month
+                        ? todo.inicio.day == today.day
+                        : false
+                    : false;
+                return isToday;
+              }).toList())
           ],
         ),
       ),
-    );
-  }
-
-  _fieldTask({bool hasNext: false, DateTime dateTime, List<Widget> items}) {
-    return Stack(
-      children: <Widget>[
-        Positioned(
-          top: 16,
-          bottom: 0,
-          left: 8,
-          child: hasNext
-              ? Padding(
-                  padding: const EdgeInsets.only(top: 5.0),
-                  child: Container(
-                    width: 2,
-                    height: 50,
-                    color: Color(0xFF312E3F),
-                  ),
-                )
-              : Container(),
-        ),
-        Container(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Container(
-                child: Column(
-                  children: <Widget>[
-                    CustomCheckBox(
-                        value: value,
-                        color: Color(0xFF312E3F),
-                        onPressed: () {
-                          setState(() {
-                            value = !value;
-                          });
-                        })
-                  ],
-                ),
-              ),
-              SizedBox(
-                width: 10,
-              ),
-              Container(
-                child: Text(
-                    "${dateTime.hour}:${dateTime.minute == 0 ? "00" : dateTime.minute} ${dateTime.hour > 12 ? "pm" : "am"}",
-                    style: TextStyle(
-                        fontSize: 10,
-                        fontFamily: "OpenSans",
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600)),
-              ),
-              SizedBox(
-                width: 30,
-              ),
-              Expanded(
-                  child: Container(
-                padding: EdgeInsets.only(bottom: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: items,
-                ),
-              )),
-            ],
-          ),
-        ),
-      ],
     );
   }
 
