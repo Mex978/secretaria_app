@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:todo_app/models/todo_model.dart';
 import 'package:todo_app/screens/section/components/custom_card.dart';
 import 'package:todo_app/screens/section/components/field_task.dart';
-import 'package:todo_app/services/dados_mockados.dart';
 import 'package:todo_app/utils/sort_todo_list.dart';
-import 'package:todo_app/utils/update_date.dart';
 
 Map<int, List<Todo>> _groupByMonth(List<Todo> todos) {
   Map<int, List<Todo>> map = {};

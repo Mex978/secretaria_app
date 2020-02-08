@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/models/todo_model.dart';
 import 'package:todo_app/screens/home/components/custom_app_bar.dart';
 import 'package:todo_app/screens/section/components/section_month.dart';
 import 'package:todo_app/screens/section/components/section_today.dart';
 import 'package:todo_app/screens/section/components/section_week.dart';
 import 'package:todo_app/services/dados_mockados.dart';
-import 'package:todo_app/utils/absolute.dart';
-import './components/custom_card.dart';
-import 'package:todo_app/screens/section/components/custom_checkbox.dart';
 
 class SectionScreen extends StatefulWidget {
   @override
