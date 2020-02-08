@@ -15,7 +15,7 @@ fieldTask(
         left: 8,
         child: hasNext
             ? Padding(
-                padding: const EdgeInsets.only(top: 5.0),
+                padding: const EdgeInsets.only(top: 5, bottom: 3),
                 child: Container(
                   width: 2,
                   height: 50,

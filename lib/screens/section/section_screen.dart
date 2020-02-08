@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/models/todo_model.dart';
 import 'package:todo_app/screens/home/components/custom_app_bar.dart';
+import 'package:todo_app/screens/section/components/section_month.dart';
 import 'package:todo_app/screens/section/components/section_today.dart';
+import 'package:todo_app/screens/section/components/section_week.dart';
 import 'package:todo_app/services/dados_mockados.dart';
+import 'package:todo_app/utils/absolute.dart';
 import './components/custom_card.dart';
 import 'package:todo_app/screens/section/components/custom_checkbox.dart';
 
@@ -105,17 +108,32 @@ class _SectionScreenState extends State<SectionScreen> {
                 ],
               ),
             ),
-            if (page == 0)
-              SectionToday(
-                  items: todos.where((todo) {
-                DateTime today = DateTime.now();
-                bool isToday = todo.inicio.year == today.year
-                    ? todo.inicio.month == today.month
-                        ? todo.inicio.day == today.day
-                        : false
-                    : false;
-                return isToday;
-              }).toList())
+            page == 0
+                ? SectionToday(
+                    items: todos.where((todo) {
+                    print(todo);
+                    // DateTime today = DateTime.now();
+                    DateTime today = DateTime(2020, 2, 7);
+                    bool isToday = todo.inicio.year == today.year
+                        ? todo.inicio.month == today.month
+                            ? todo.inicio.day == today.day
+                            : false
+                        : false;
+                    return isToday;
+                  }).toList())
+                : page == 1
+                    ? SectionWeek(
+                        items: todos
+                            .where((todo) =>
+                                todo.inicio.difference(DateTime.now()).inDays <
+                                7)
+                            .toList(),
+                      )
+                    : page == 2
+                        ? SectionMonth(
+                            items: todos,
+                          )
+                        : Container()
           ],
         ),
       ),

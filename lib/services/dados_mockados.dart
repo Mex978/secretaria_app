@@ -3,6 +3,46 @@ import 'package:todo_app/models/todo_model.dart';
 List<Todo> todos = [
   Todo(
     tile: "Fazer uma empada",
+    inicio: DateTime(2020, 1, 7, 14, 30),
+  ),
+  Todo(
+    tile: "Fazer uma empada",
+    inicio: DateTime(2020, 4, 7, 14, 30),
+  ),
+  Todo(
+    tile: "Fazer uma empada",
+    inicio: DateTime(2020, 5, 7, 14, 30),
+  ),
+  Todo(
+    tile: "Fazer uma empada",
+    inicio: DateTime(2020, 6, 7, 14, 30),
+  ),
+  Todo(
+    tile: "Fazer uma empada",
+    inicio: DateTime(2020, 7, 7, 14, 30),
+  ),
+  Todo(
+    tile: "Fazer uma empada",
+    inicio: DateTime(2020, 8, 7, 14, 30),
+  ),
+  Todo(
+    tile: "Fazer uma empada",
+    inicio: DateTime(2020, 9, 7, 14, 30),
+  ),
+  Todo(
+    tile: "Fazer uma empada",
+    inicio: DateTime(2020, 10, 7, 14, 30),
+  ),
+  Todo(
+    tile: "Fazer uma empada",
+    inicio: DateTime(2020, 11, 7, 14, 30),
+  ),
+  Todo(
+    tile: "Fazer uma empada",
+    inicio: DateTime(2020, 12, 7, 14, 30),
+  ),
+  Todo(
+    tile: "Fazer uma empada",
     inicio: DateTime(2020, 3, 7, 14, 30),
   ),
   Todo(
@@ -19,7 +59,15 @@ List<Todo> todos = [
   ),
   Todo(
     tile: "Terminar TCC",
-    inicio: DateTime(2020, 2, 7, 12, 30),
+    inicio: DateTime(2020, 2, 7, 10, 54),
+  ),
+  Todo(
+    tile: "Quarta feira alegre",
+    inicio: DateTime(2020, 2, 5, 10, 54),
+  ),
+  Todo(
+    tile: "Domingo com Jesus",
+    inicio: DateTime(2020, 2, 9, 10, 54),
   ),
   Todo(
     tile: "Concluir isso aqui o mais rápido possível",
