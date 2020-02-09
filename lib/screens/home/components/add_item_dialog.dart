@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:get_it/get_it.dart';
+import 'package:todo_app/controllers/add_todo_item_controller.dart';
+import 'package:todo_app/controllers/todo_controller.dart';
 import 'package:todo_app/customs/custom_dialog.dart';
 import 'package:todo_app/customs/custom_ink_well.dart';
 import 'package:todo_app/customs/custom_raised_button.dart';
 import 'package:todo_app/customs/custom_text_field.dart';
-import 'package:todo_app/models/todo_model.dart';
-import 'package:todo_app/services/dados_mockados.dart';
 
 class AddItemDialog extends StatefulWidget {
   @override
@@ -12,11 +14,11 @@ class AddItemDialog extends StatefulWidget {
 }
 
 class _AddItemDialogState extends State<AddItemDialog> {
+  final AddTodoItemController _addTodoItemController =
+      GetIt.I.get<AddTodoItemController>();
+  final TodoController _todoController = GetIt.I.get<TodoController>();
   DateTime selectedDate = DateTime.now();
   int _category = 0;
-  String title;
-  String description;
-  DateTime date;
 
   @override
   Widget build(BuildContext context) {
@@ -28,26 +30,22 @@ class _AddItemDialogState extends State<AddItemDialog> {
         _buildDivider(),
         _category == 0 ? _addTodo() : _category == 2 ? _addNote() : Container(),
         _buildDivider(h: 32),
-        CustomRaisedButton(
-            text: "Salvar",
-            // enabled: _validate(),
-            onPressed: () {
-              if (_category == 0) {
-                Todo todoItem;
-                if (title != null && date != null)
-                  todoItem = Todo(
-                      title: title,
-                      inicio: selectedDate,
-                      descricao: description ?? null);
-                if (todoItem != null) todos.add(todoItem);
-              }
-              Navigator.pop(context);
-            })
+        Observer(
+          builder: (_) {
+            return CustomRaisedButton(
+                text: "Salvar",
+                enabled: _addTodoItemController.validate,
+                onPressed: () {
+                  if (_category == 0) {
+                    _todoController.insertTodo(_addTodoItemController.toObject);
+                  }
+                  Navigator.pop(context);
+                });
+          },
+        ),
       ],
     );
   }
-
-  _validate() => title != null && date != null;
 
   _buildDivider({double h: 16}) {
     return SizedBox(
@@ -114,9 +112,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
           labelText: "Título",
           hintText: "Digite o título",
           onChanged: (value) {
-            setState(() {
-              title = value;
-            });
+            _addTodoItemController.changeTitle(value);
           },
         ),
         SizedBox(
@@ -126,9 +122,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
           labelText: "Descrição",
           hintText: "Digite a descrição (opcional)",
           onChanged: (value) {
-            setState(() {
-              description = value;
-            });
+            _addTodoItemController.changeDescription(value);
           },
         ),
         SizedBox(
@@ -145,11 +139,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
         CustomTextField(
           labelText: "Título",
           hintText: "Digite o título",
-          onChanged: (value) {
-            setState(() {
-              title = value;
-            });
-          },
+          onChanged: (value) {},
         ),
         SizedBox(
           height: 16,
@@ -157,11 +147,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
         CustomTextField(
           labelText: "Descrição",
           hintText: "Digite a descrição (opcional)",
-          onChanged: (value) {
-            setState(() {
-              title = value;
-            });
-          },
+          onChanged: (value) {},
         ),
       ],
     );
@@ -202,9 +188,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
                               lastDate: DateTime(2050))
                           .then((date) {
                         if (date != null)
-                          setState(() {
-                            selectedDate = date;
-                          });
+                          _addTodoItemController.changeDate(date);
                       });
                     },
                     child: Container(

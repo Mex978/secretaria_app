@@ -6,7 +6,6 @@ class CustomTextField extends StatelessWidget {
   final bool multiLine;
   final String initialText;
   final ValueChanged<String> onChanged;
-  final bool enabled;
 
   const CustomTextField(
       {Key key,
@@ -14,7 +13,6 @@ class CustomTextField extends StatelessWidget {
       this.labelText,
       this.hintText,
       this.onChanged,
-      this.enabled: true,
       this.initialText})
       : super(key: key);
 
@@ -34,18 +32,15 @@ class CustomTextField extends StatelessWidget {
           SizedBox(
             height: 4,
           ),
-          AbsorbPointer(
-            absorbing: !enabled,
-            child: Expanded(
-              child: TextField(
-                maxLines: multiLine ? null : 1,
-                controller: _textEditingController,
-                onChanged: (value) => onChanged(value),
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(4)),
-                    hintText: hintText),
-              ),
+          Expanded(
+            child: TextField(
+              maxLines: multiLine ? null : 1,
+              controller: _textEditingController,
+              onChanged: (value) => onChanged(value),
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4)),
+                  hintText: hintText),
             ),
           )
         ],

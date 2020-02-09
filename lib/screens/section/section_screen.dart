@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:get_it/get_it.dart';
+import 'package:todo_app/controllers/todo_controller.dart';
 import 'package:todo_app/customs/custom_ink_well.dart';
 import 'package:todo_app/models/todo_model.dart';
 import 'package:todo_app/screens/home/components/custom_app_bar.dart';
 import 'package:todo_app/screens/section/components/custom_card.dart';
 import 'package:todo_app/screens/section/components/field_task.dart';
-import 'package:todo_app/services/dados_mockados.dart';
 import 'package:todo_app/utils/date_parser.dart';
 import 'package:todo_app/utils/group_functions.dart';
 import 'package:todo_app/utils/sort_todo_list.dart';
@@ -17,6 +19,7 @@ class SectionScreen extends StatefulWidget {
 class _SectionScreenState extends State<SectionScreen> {
   int page = 0;
   Map<int, dynamic> _sections = {};
+  final TodoController _todoController = GetIt.I.get<TodoController>();
 
   final PageController _pageController =
       PageController(initialPage: 0, viewportFraction: 1);
@@ -25,23 +28,35 @@ class _SectionScreenState extends State<SectionScreen> {
   Widget build(BuildContext context) {
     ThemeData _theme = Theme.of(context);
 
-    _onInit();
+    return Observer(
+      builder: (_) {
+        if (_todoController.todos == null && _todoController.todos.isEmpty)
+          return Scaffold(
+            backgroundColor: _theme.backgroundColor,
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
 
-    return Scaffold(
-      backgroundColor: _theme.backgroundColor,
-      appBar: customAppBar(
-          description: "Essa é sua lista de to-do's",
-          icon: Icons.arrow_back,
-          onLeadingPress: () => Navigator.pop(context)),
-      body: SafeArea(
-        child: Column(
-          children: <Widget>[_tabBar(), _body()],
-        ),
-      ),
+        _onInit(_todoController.todos);
+
+        return Scaffold(
+          backgroundColor: _theme.backgroundColor,
+          appBar: customAppBar(
+              description: "Essa é sua lista de to-do's",
+              icon: Icons.arrow_back,
+              onLeadingPress: () => Navigator.pop(context)),
+          body: SafeArea(
+            child: Column(
+              children: <Widget>[_tabBar(), _body()],
+            ),
+          ),
+        );
+      },
     );
   }
 
-  _onInit() {
+  _onInit(List<Todo> todos) {
     List<Todo> itemsOfToday = todos.where((todo) {
       DateTime todoDate = todo.inicio;
 

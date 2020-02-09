@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:get_it/get_it.dart';
+import 'package:todo_app/controllers/todo_controller.dart';
 import 'package:todo_app/screens/home/components/add_item_button.dart';
 import 'package:todo_app/screens/home/components/custom_app_bar.dart';
 import 'package:todo_app/screens/home/components/custom_card.dart';
@@ -6,6 +9,7 @@ import 'package:todo_app/screens/home/components/grid_view.dart';
 import 'package:todo_app/screens/section/section_screen.dart';
 
 class HomeScreen extends StatelessWidget {
+  final TodoController _todoController = GetIt.I.get<TodoController>();
   final GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
 
   @override
@@ -38,13 +42,17 @@ class HomeScreen extends StatelessWidget {
             child: CustomGridView(
               items: <Widget>[
                 Center(
-                  child: CustomCard(
-                    description: "To Do",
-                    count: "3 items",
-                    icon: Icons.assignment,
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => SectionScreen()));
+                  child: Observer(
+                    builder: (_) {
+                      return CustomCard(
+                        description: "To Do",
+                        count: "${_todoController.todos.length} items",
+                        icon: Icons.assignment,
+                        onPressed: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => SectionScreen()));
+                        },
+                      );
                     },
                   ),
                 ),

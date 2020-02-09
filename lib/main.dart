@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:get_it/get_it.dart';
+import 'package:todo_app/controllers/add_todo_item_controller.dart';
+import 'package:todo_app/controllers/todo_controller.dart';
 import 'package:todo_app/screens/home/home_screen.dart';
 import 'package:todo_app/themes/default.dart';
 import 'package:todo_app/utils/scroll_behavior.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  GetIt.instance.registerSingleton<TodoController>(TodoController());
+  GetIt.instance
+      .registerSingleton<AddTodoItemController>(AddTodoItemController());
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
