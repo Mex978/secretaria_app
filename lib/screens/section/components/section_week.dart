@@ -55,19 +55,17 @@ class SectionWeek extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Map<int, List<Todo>> map = _groupByWeek(sortTodoList(items));
-    return Expanded(
-      child: ListView(
-          padding: const EdgeInsets.all(20),
-          children: map.keys.map<Widget>((key) {
-            return fieldTask(
-                headTime: headerTimeParser(key),
-                hasNext: !(map.keys.last == key),
-                items: map[key]
-                    .map((todo) => CustomCard(
-                          task: todo.tile,
-                        ))
-                    .toList());
-          }).toList()),
-    );
+    return ListView(
+        padding: const EdgeInsets.all(20),
+        children: map.keys.map<Widget>((key) {
+          return fieldTask(
+              headTime: headerTimeParser(key),
+              hasNext: !(map.keys.last == key),
+              items: map[key]
+                  .map((todo) => CustomCard(
+                        task: todo.tile,
+                      ))
+                  .toList());
+        }).toList());
   }
 }

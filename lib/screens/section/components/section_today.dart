@@ -6,7 +6,7 @@ import 'package:todo_app/utils/sort_todo_list.dart';
 import 'package:todo_app/utils/update_date.dart';
 
 Map<DateTime, List<Todo>> _groupByTime(List<Todo> todos) {
-  print(todos);
+  // print(todos);
   Map<DateTime, List<Todo>> map = {};
 
   todos.forEach((todo) {
@@ -36,19 +36,17 @@ class SectionToday extends StatelessWidget {
   Widget build(BuildContext context) {
     // print(items);
     Map<DateTime, List<Todo>> map = _groupByTime(sortTodoList(items));
-    return Expanded(
-      child: ListView(
-          padding: const EdgeInsets.all(20),
-          children: map.keys.map<Widget>((key) {
-            return fieldTask(
-                headTime: headTimeParser(key),
-                hasNext: !(map.keys.last == key),
-                items: map[key]
-                    .map((todo) => CustomCard(
-                          task: todo.tile,
-                        ))
-                    .toList());
-          }).toList()),
-    );
+    return ListView(
+        padding: const EdgeInsets.all(20),
+        children: map.keys.map<Widget>((key) {
+          return fieldTask(
+              headTime: headTimeParser(key),
+              hasNext: !(map.keys.last == key),
+              items: map[key]
+                  .map((todo) => CustomCard(
+                        task: todo.tile,
+                      ))
+                  .toList());
+        }).toList());
   }
 }

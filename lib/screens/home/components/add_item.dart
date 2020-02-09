@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/screens/home/components/add_item_dialog.dart';
 
 class AddItem extends StatelessWidget {
   @override
@@ -15,7 +16,9 @@ class AddItem extends StatelessWidget {
             )),
         child: FlatButton(
           padding: EdgeInsets.zero,
-          onPressed: () {},
+          onPressed: () {
+            showDialog(context: context, child: AddItemDialog());
+          },
           child: Icon(
             Icons.add,
             size: 40,

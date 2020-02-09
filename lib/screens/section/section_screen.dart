@@ -11,10 +11,11 @@ class SectionScreen extends StatefulWidget {
 }
 
 class _SectionScreenState extends State<SectionScreen> {
-  Alignment alignment = Alignment.centerLeft;
   double widthIndicator = 50;
   bool value = false;
   int page = 0;
+  final PageController _pageController =
+      PageController(initialPage: 0, viewportFraction: 1);
 
   @override
   Widget build(BuildContext context) {
@@ -29,86 +30,19 @@ class _SectionScreenState extends State<SectionScreen> {
       body: SafeArea(
         child: Column(
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Container(
-                child: Row(
-                  children: <Widget>[
-                    _itemsTab(
-                        context: context,
-                        content: "Hoje",
-                        align: Alignment.centerLeft,
-                        onPressed: () {
-                          setState(() {
-                            alignment = Alignment.centerLeft;
-                            widthIndicator = 50;
-                            page = 0;
-                          });
-                        }),
-                    _itemsTab(
-                        context: context,
-                        content: "Semana",
-                        align: Alignment.center,
-                        onPressed: () {
-                          setState(() {
-                            alignment = Alignment.center;
-                            widthIndicator = 80;
-                            page = 1;
-                          });
-                        }),
-                    _itemsTab(
-                        context: context,
-                        content: "Mês",
-                        align: Alignment.centerRight,
-                        onPressed: () {
-                          setState(() {
-                            alignment = Alignment.centerRight;
-                            widthIndicator = 50;
-                            page = 2;
-                          });
-                        }),
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Stack(
+            _tabBar(),
+            Expanded(
+              child: PageView(
+                onPageChanged: (value) {
+                  setState(() {
+                    page = value;
+                  });
+                },
+                controller: _pageController,
                 children: <Widget>[
-                  Container(
-                    child: Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: Container(
-                            margin: EdgeInsets.only(top: 5),
-                            color: Color(0xFF312E3F),
-                            height: 1.5,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  AnimatedContainer(
-                    duration: Duration(milliseconds: 200),
-                    curve: Curves.easeIn,
-                    alignment: alignment,
-                    child: Container(
-                      margin: EdgeInsets.only(top: 4),
-                      decoration: BoxDecoration(
-                          color: Color(0xFFE3E2E5),
-                          borderRadius: BorderRadius.circular(50)),
-                      width: widthIndicator,
-                      height: 2,
-                    ),
-                  )
-                ],
-              ),
-            ),
-            page == 0
-                ? SectionToday(
-                    items: todos.where((todo) {
-                    print(todo);
-                    // DateTime today = DateTime.now();
+                  SectionToday(
+                      items: todos.where((todo) {
+                    //todo Modificar essa linha para DateTime.now()
                     DateTime today = DateTime(2020, 2, 7);
                     bool isToday = todo.inicio.year == today.year
                         ? todo.inicio.month == today.month
@@ -116,23 +50,105 @@ class _SectionScreenState extends State<SectionScreen> {
                             : false
                         : false;
                     return isToday;
-                  }).toList())
-                : page == 1
-                    ? SectionWeek(
-                        items: todos
-                            .where((todo) =>
-                                todo.inicio.difference(DateTime.now()).inDays <
-                                7)
-                            .toList(),
-                      )
-                    : page == 2
-                        ? SectionMonth(
-                            items: todos,
-                          )
-                        : Container()
+                  }).toList()),
+                  SectionWeek(
+                    items: todos
+                        .where((todo) =>
+                            todo.inicio.difference(DateTime.now()).inDays < 7)
+                        .toList(),
+                  ),
+                  SectionMonth(
+                    items: todos,
+                  )
+                ],
+              ),
+            )
           ],
         ),
       ),
+    );
+  }
+
+  _tabs() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Container(
+        child: Row(
+          children: <Widget>[
+            _itemsTab(
+                context: context,
+                content: "Hoje",
+                align: Alignment.centerLeft,
+                onPressed: () {
+                  _pageController.animateToPage(0,
+                      curve: Curves.ease,
+                      duration: Duration(milliseconds: 500));
+                }),
+            _itemsTab(
+                context: context,
+                content: "Semana",
+                align: Alignment.center,
+                onPressed: () {
+                  _pageController.animateToPage(1,
+                      curve: Curves.ease,
+                      duration: Duration(milliseconds: 500));
+                }),
+            _itemsTab(
+                context: context,
+                content: "Mês",
+                align: Alignment.centerRight,
+                onPressed: () {
+                  _pageController.animateToPage(2,
+                      curve: Curves.ease,
+                      duration: Duration(milliseconds: 500));
+                }),
+          ],
+        ),
+      ),
+    );
+  }
+
+  _indicator() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Stack(
+        children: <Widget>[
+          Container(
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.only(top: 5),
+                    color: Color(0xFF312E3F),
+                    height: 1.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          AnimatedContainer(
+            duration: Duration(milliseconds: 200),
+            curve: Curves.easeIn,
+            alignment: page == 0
+                ? Alignment.centerLeft
+                : page == 1 ? Alignment.center : Alignment.centerRight,
+            child: Container(
+              margin: EdgeInsets.only(top: 4),
+              decoration: BoxDecoration(
+                  color: Color(0xFFE3E2E5),
+                  borderRadius: BorderRadius.circular(50)),
+              width: page == 1 ? 50 : 80,
+              height: 2,
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  _tabBar() {
+    return Column(
+      children: <Widget>[_tabs(), _indicator()],
     );
   }
 
