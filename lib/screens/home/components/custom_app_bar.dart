@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/customs/custom_ink_well.dart';
 
 customAppBar(
     {GlobalKey<ScaffoldState> key,
@@ -17,20 +18,16 @@ customAppBar(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  InkWell(
-                    onTap:
-                        onLeadingPress ?? () => key.currentState.openDrawer(),
-                    highlightColor: Colors.transparent,
-                    splashFactory: InkRipple.splashFactory,
-                    splashColor: Colors.blue[600],
-                    child: Padding(
-                      padding: EdgeInsets.all(10),
-                      child: Icon(
-                        icon,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
+                  CustomInkWell(
+                      onTap:
+                          onLeadingPress ?? () => key.currentState.openDrawer(),
+                      child: Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Icon(
+                          icon,
+                          color: Colors.white,
+                        ),
+                      )),
                   CircleAvatar(
                     backgroundColor: Colors.transparent,
                     backgroundImage: AssetImage("assets/user.jpg"),

@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/customs/custom_ink_well.dart';
+import 'package:todo_app/models/todo_model.dart';
 import 'package:todo_app/screens/home/components/custom_app_bar.dart';
-import 'package:todo_app/screens/section/components/section_month.dart';
-import 'package:todo_app/screens/section/components/section_today.dart';
-import 'package:todo_app/screens/section/components/section_week.dart';
+import 'package:todo_app/screens/section/components/custom_card.dart';
+import 'package:todo_app/screens/section/components/field_task.dart';
 import 'package:todo_app/services/dados_mockados.dart';
+import 'package:todo_app/utils/date_parser.dart';
+import 'package:todo_app/utils/group_functions.dart';
+import 'package:todo_app/utils/sort_todo_list.dart';
 
 class SectionScreen extends StatefulWidget {
   @override
@@ -11,15 +15,17 @@ class SectionScreen extends StatefulWidget {
 }
 
 class _SectionScreenState extends State<SectionScreen> {
-  double widthIndicator = 50;
-  bool value = false;
   int page = 0;
+  Map<int, dynamic> _sections = {};
+
   final PageController _pageController =
       PageController(initialPage: 0, viewportFraction: 1);
 
   @override
   Widget build(BuildContext context) {
     ThemeData _theme = Theme.of(context);
+
+    _onInit();
 
     return Scaffold(
       backgroundColor: _theme.backgroundColor,
@@ -29,44 +35,45 @@ class _SectionScreenState extends State<SectionScreen> {
           onLeadingPress: () => Navigator.pop(context)),
       body: SafeArea(
         child: Column(
-          children: <Widget>[
-            _tabBar(),
-            Expanded(
-              child: PageView(
-                onPageChanged: (value) {
-                  setState(() {
-                    page = value;
-                  });
-                },
-                controller: _pageController,
-                children: <Widget>[
-                  SectionToday(
-                      items: todos.where((todo) {
-                    //todo Modificar essa linha para DateTime.now()
-                    DateTime today = DateTime(2020, 2, 7);
-                    bool isToday = todo.inicio.year == today.year
-                        ? todo.inicio.month == today.month
-                            ? todo.inicio.day == today.day
-                            : false
-                        : false;
-                    return isToday;
-                  }).toList()),
-                  SectionWeek(
-                    items: todos
-                        .where((todo) =>
-                            todo.inicio.difference(DateTime.now()).inDays < 7)
-                        .toList(),
-                  ),
-                  SectionMonth(
-                    items: todos,
-                  )
-                ],
-              ),
-            )
-          ],
+          children: <Widget>[_tabBar(), _body()],
         ),
       ),
     );
+  }
+
+  _onInit() {
+    List<Todo> itemsOfToday = todos.where((todo) {
+      DateTime todoDate = todo.inicio;
+
+      //todo Trocar por DateTime.now()
+      DateTime todayDate = DateTime(2020, 2, 7);
+      return todayDate.year == todoDate.year
+          ? todayDate.month == todoDate.month
+              ? todayDate.day == todoDate.day
+              : false
+          : false;
+    }).toList();
+
+    List<Todo> itemsOfWeek = todos.where((todo) {
+      DateTime todoDate = todo.inicio;
+
+      //todo Trocar por DateTime.now()
+      DateTime todayDate = DateTime(2020, 2, 7);
+      return todoDate.difference(todayDate).inDays < 7;
+    }).toList();
+
+    _sections[0] = {
+      "items": groupByTime(sortTodoList(itemsOfToday)),
+      "parser": timeParser
+    };
+    _sections[1] = {
+      "items": groupByWeek(sortTodoList(itemsOfWeek)),
+      "parser": weekParser
+    };
+    _sections[2] = {
+      "items": groupByMonth(sortTodoList(todos)),
+      "parser": monthParser
+    };
   }
 
   _tabs() {
@@ -152,6 +159,35 @@ class _SectionScreenState extends State<SectionScreen> {
     );
   }
 
+  _body() {
+    return Expanded(
+      child: PageView(
+        onPageChanged: (value) {
+          setState(() {
+            page = value;
+          });
+        },
+        controller: _pageController,
+        children: _sections.keys.map<Widget>((index) {
+          Map<dynamic, List<Todo>> items = _sections[index]["items"];
+          Function parser = _sections[index]["parser"];
+          return ListView(
+              padding: const EdgeInsets.all(20),
+              children: items.keys.map<Widget>((key) {
+                return fieldTask(
+                    headTime: parser(key),
+                    hasNext: !(items.keys.last == key),
+                    items: items[key]
+                        .map((todo) => CustomCard(
+                              todo: todo,
+                            ))
+                        .toList());
+              }).toList());
+        }).toList(),
+      ),
+    );
+  }
+
   _itemsTab(
       {BuildContext context,
       String content,
@@ -160,9 +196,7 @@ class _SectionScreenState extends State<SectionScreen> {
     return Expanded(
       child: Align(
         alignment: align,
-        child: InkWell(
-          highlightColor: Colors.transparent,
-          splashFactory: InkRipple.splashFactory,
+        child: CustomInkWell(
           borderRadius: BorderRadius.circular(20),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),

@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/customs/custom_dialog.dart';
+import 'package:todo_app/customs/custom_ink_well.dart';
+import 'package:todo_app/customs/custom_raised_button.dart';
+import 'package:todo_app/customs/custom_text_field.dart';
 import 'package:todo_app/models/todo_model.dart';
 import 'package:todo_app/services/dados_mockados.dart';
 
@@ -16,89 +20,38 @@ class _AddItemDialogState extends State<AddItemDialog> {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData _theme = Theme.of(context);
-    return Dialog(
-      backgroundColor: Colors.transparent,
-      child: Center(
-          child: Container(
-        decoration: _decoration(),
-        padding: EdgeInsets.all(1),
-        child: SingleChildScrollView(
-          child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
-                color: _theme.backgroundColor,
-              ),
-              padding: EdgeInsets.all(16),
-              child: Column(
-                children: <Widget>[
-                  _headerDialog(),
-                  SizedBox(
-                    height: 16,
-                  ),
-                  _selectCategory(),
-                  SizedBox(
-                    height: 16,
-                  ),
-                  _category == 0
-                      ? _addTodo()
-                      : _category == 2 ? _addNote() : Container(),
-                  SizedBox(
-                    height: 32,
-                  ),
-                  _buttonSubmit(
-                      _category == 0
-                          ? "Salvar To-Do"
-                          : _category == 1 ? "Salvar Evento" : "Salvar Nota",
-                      onPressed: () {
-                    if (_category == 0) {
-                      Todo todoItem;
-                      if (title != null && date != null)
-                        todoItem = Todo(
-                            tile: title,
-                            inicio: selectedDate,
-                            descricao: description ?? null);
-                      if (todoItem != null) todos.add(todoItem);
-                    }
-                  }),
-                ],
-              )),
-        ),
-      )),
+    return CustomDialog(
+      title: "Adicionar Item",
+      children: <Widget>[
+        _buildDivider(),
+        _selectCategory(),
+        _buildDivider(),
+        _category == 0 ? _addTodo() : _category == 2 ? _addNote() : Container(),
+        _buildDivider(h: 32),
+        CustomRaisedButton(
+            text: "Salvar",
+            // enabled: _validate(),
+            onPressed: () {
+              if (_category == 0) {
+                Todo todoItem;
+                if (title != null && date != null)
+                  todoItem = Todo(
+                      title: title,
+                      inicio: selectedDate,
+                      descricao: description ?? null);
+                if (todoItem != null) todos.add(todoItem);
+              }
+              Navigator.pop(context);
+            })
+      ],
     );
   }
 
-  _decoration() {
-    return BoxDecoration(
-        borderRadius: BorderRadius.circular(5),
-        gradient: LinearGradient(
-          colors: [Color(0xFFF12C43), Color(0xFFD75C29)],
-          stops: [0.2, 0.8],
-        ));
-  }
+  _validate() => title != null && date != null;
 
-  _headerDialog() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Text(
-          "Adicionar Item",
-          style: TextStyle(fontSize: 20),
-        ),
-        Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: () => Navigator.pop(context),
-            child: Container(
-              padding: EdgeInsets.all(5),
-              child: Icon(
-                Icons.close,
-                size: 30,
-              ),
-            ),
-          ),
-        )
-      ],
+  _buildDivider({double h: 16}) {
+    return SizedBox(
+      height: h,
     );
   }
 
@@ -157,11 +110,27 @@ class _AddItemDialogState extends State<AddItemDialog> {
   _addTodo() {
     return Column(
       children: <Widget>[
-        _fieldToFill("Título"),
+        CustomTextField(
+          labelText: "Título",
+          hintText: "Digite o título",
+          onChanged: (value) {
+            setState(() {
+              title = value;
+            });
+          },
+        ),
         SizedBox(
           height: 16,
         ),
-        _fieldToFill("Descrição"),
+        CustomTextField(
+          labelText: "Descrição",
+          hintText: "Digite a descrição (opcional)",
+          onChanged: (value) {
+            setState(() {
+              description = value;
+            });
+          },
+        ),
         SizedBox(
           height: 16,
         ),
@@ -173,11 +142,27 @@ class _AddItemDialogState extends State<AddItemDialog> {
   _addNote() {
     return Column(
       children: <Widget>[
-        _fieldToFill("Título"),
+        CustomTextField(
+          labelText: "Título",
+          hintText: "Digite o título",
+          onChanged: (value) {
+            setState(() {
+              title = value;
+            });
+          },
+        ),
         SizedBox(
           height: 16,
         ),
-        _fieldToFill("Descrição"),
+        CustomTextField(
+          labelText: "Descrição",
+          hintText: "Digite a descrição (opcional)",
+          onChanged: (value) {
+            setState(() {
+              title = value;
+            });
+          },
+        ),
       ],
     );
   }
@@ -206,12 +191,8 @@ class _AddItemDialogState extends State<AddItemDialog> {
                   child: Text(
                       "${selectedDate.day < 10 ? "0" + selectedDate.day.toString() : selectedDate.day}/${selectedDate.month < 10 ? "0" + selectedDate.month.toString() : selectedDate.day}/${selectedDate.year}"),
                 ),
-                Material(
-                  color: Colors.transparent,
-                  child: InkWell(
+                CustomInkWell(
                     borderRadius: BorderRadius.circular(50),
-                    highlightColor: Colors.transparent,
-                    splashFactory: InkRipple.splashFactory,
                     onTap: () {
                       showDatePicker(
                               locale: Locale("pt", "BR"),
@@ -234,70 +215,9 @@ class _AddItemDialogState extends State<AddItemDialog> {
                         Icons.edit,
                         size: 25,
                       ),
-                    ),
-                  ),
-                )
+                    ))
               ],
             ),
-          )
-        ],
-      ),
-    );
-  }
-
-  _buttonSubmit(String text, {Function onPressed}) {
-    return Row(
-      children: <Widget>[
-        Expanded(
-          child: Container(
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(25),
-                  gradient: LinearGradient(
-                    colors: [Color(0xFFF12C43), Color(0xFFD75C29)],
-                    stops: [0.2, 0.8],
-                  )),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  highlightColor: Colors.transparent,
-                  splashFactory: InkRipple.splashFactory,
-                  borderRadius: BorderRadius.circular(25),
-                  onTap: onPressed,
-                  child: Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Center(
-                      child: Text(
-                        text,
-                        style: TextStyle(fontWeight: FontWeight.w600),
-                      ),
-                    ),
-                  ),
-                ),
-              )),
-        ),
-      ],
-    );
-  }
-
-  _fieldToFill(String field) {
-    return Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            field + ":",
-            style: TextStyle(fontWeight: FontWeight.w600),
-          ),
-          SizedBox(
-            height: 4,
-          ),
-          TextField(
-            decoration: InputDecoration(
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(4)),
-                hintText: field == "Título"
-                    ? "Digite o título"
-                    : "Digite a descrição (Opcional)"),
           )
         ],
       ),

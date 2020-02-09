@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/screens/home/components/add_item.dart';
+import 'package:todo_app/screens/home/components/add_item_button.dart';
 import 'package:todo_app/screens/home/components/custom_app_bar.dart';
 import 'package:todo_app/screens/home/components/custom_card.dart';
 import 'package:todo_app/screens/home/components/grid_view.dart';
@@ -67,7 +67,7 @@ class HomeScreen extends StatelessWidget {
                 Container(
                   child: Center(
                     child: Row(
-                      children: <Widget>[AddItem()],
+                      children: <Widget>[AddItemButton()],
                     ),
                   ),
                 )

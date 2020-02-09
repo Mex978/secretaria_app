@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/customs/custom_dialog.dart';
+import 'package:todo_app/customs/custom_ink_well.dart';
+import 'package:todo_app/models/todo_model.dart';
 
 class CustomCard extends StatelessWidget {
-  final String task;
+  final Todo todo;
   final bool isCompleted;
 
-  const CustomCard({Key key, this.task, this.isCompleted: false})
+  const CustomCard({Key key, this.todo, this.isCompleted: false})
       : super(key: key);
 
   @override
@@ -22,31 +25,34 @@ class CustomCard extends StatelessWidget {
                     colors: [Color(0xFFF12C43), Color(0xFFD75C29)],
                     stops: [0.2, 0.8],
                   )),
-        // width: 250,
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            highlightColor: Colors.transparent,
-            splashFactory: InkRipple.splashFactory,
-            borderRadius: BorderRadius.circular(5),
-            onTap: () {},
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Text(
-                task,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                    decoration: isCompleted
-                        ? TextDecoration.lineThrough
-                        : TextDecoration.none,
-                    fontSize: 14,
-                    color: Colors.white,
-                    fontFamily: "OpenSans",
-                    fontWeight: FontWeight.w600),
-              ),
+        child: CustomInkWell(
+          borderRadius: BorderRadius.circular(5),
+          onTap: () => _showTodo(context),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Text(
+              todo.title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                  decoration: isCompleted
+                      ? TextDecoration.lineThrough
+                      : TextDecoration.none,
+                  fontSize: 14,
+                  color: Colors.white,
+                  fontFamily: "OpenSans",
+                  fontWeight: FontWeight.w600),
             ),
           ),
+        ));
+  }
+
+  _showTodo(BuildContext context) {
+    showDialog(
+        context: context,
+        child: CustomDialog(
+          title: "Informações",
+          children: <Widget>[Container()],
         ));
   }
 }
