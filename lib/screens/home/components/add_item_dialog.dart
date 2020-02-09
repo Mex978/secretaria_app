@@ -58,7 +58,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
                             tile: title,
                             inicio: selectedDate,
                             descricao: description ?? null);
-                      todos.add(todoItem);
+                      if (todoItem != null) todos.add(todoItem);
                     }
                   }),
                 ],
