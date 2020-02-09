@@ -10,6 +10,11 @@ List<Todo> todos = [
     inicio: DateTime(2020, 4, 7, 14, 30),
   ),
   Todo(
+    title:
+        "Teste com um texto incrivelmente grande para saber os limites de dados",
+    inicio: DateTime(2020, 2, 7, 14, 30),
+  ),
+  Todo(
     title: "Fazer uma empada",
     inicio: DateTime(2020, 5, 7, 14, 30),
   ),
