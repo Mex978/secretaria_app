@@ -32,16 +32,14 @@ class CustomTextField extends StatelessWidget {
           SizedBox(
             height: 4,
           ),
-          Expanded(
-            child: TextField(
-              maxLines: multiLine ? null : 1,
-              controller: _textEditingController,
-              onChanged: (value) => onChanged(value),
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(4)),
-                  hintText: hintText),
-            ),
+          TextField(
+            maxLines: multiLine ? null : 1,
+            controller: _textEditingController,
+            onChanged: (value) => onChanged(value),
+            decoration: InputDecoration(
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(4)),
+                hintText: hintText),
           )
         ],
       ),

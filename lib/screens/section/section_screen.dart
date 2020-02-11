@@ -1,24 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:get_it/get_it.dart';
+import 'package:todo_app/controllers/page_view_controller.dart';
 import 'package:todo_app/controllers/todo_controller.dart';
 import 'package:todo_app/customs/custom_ink_well.dart';
 import 'package:todo_app/models/todo_model.dart';
 import 'package:todo_app/screens/home/components/custom_app_bar.dart';
 import 'package:todo_app/screens/section/components/custom_card.dart';
 import 'package:todo_app/screens/section/components/field_task.dart';
-import 'package:todo_app/utils/date_parser.dart';
-import 'package:todo_app/utils/group_functions.dart';
-import 'package:todo_app/utils/sort_todo_list.dart';
 
-class SectionScreen extends StatefulWidget {
-  @override
-  _SectionScreenState createState() => _SectionScreenState();
-}
-
-class _SectionScreenState extends State<SectionScreen> {
-  int page = 0;
-  Map<int, dynamic> _sections = {};
+class SectionScreen extends StatelessWidget {
+  final PageViewController _pageViewController =
+      GetIt.I.get<PageViewController>();
   final TodoController _todoController = GetIt.I.get<TodoController>();
 
   final PageController _pageController =
@@ -28,70 +21,48 @@ class _SectionScreenState extends State<SectionScreen> {
   Widget build(BuildContext context) {
     ThemeData _theme = Theme.of(context);
 
-    return Observer(
-      builder: (_) {
-        if (_todoController.todos == null && _todoController.todos.isEmpty)
-          return Scaffold(
-            backgroundColor: _theme.backgroundColor,
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-
-        _onInit(_todoController.todos);
-
-        return Scaffold(
-          backgroundColor: _theme.backgroundColor,
-          appBar: customAppBar(
-              description: "Essa é sua lista de to-do's",
-              icon: Icons.arrow_back,
-              onLeadingPress: () => Navigator.pop(context)),
-          body: SafeArea(
-            child: Column(
-              children: <Widget>[_tabBar(), _body()],
-            ),
+    return Scaffold(
+      backgroundColor: _theme.backgroundColor,
+      appBar: customAppBar(
+          description: "Essa é sua lista de to-do's",
+          icon: Icons.arrow_back,
+          onLeadingPress: () => Navigator.pop(context)),
+      body: SafeArea(
+        child: Center(
+          child: Observer(
+            builder: (_) {
+              if (_todoController.todos == null ||
+                  _todoController.todos.isEmpty)
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(
+                      Icons.cancel,
+                      size: 70,
+                      color: Colors.deepOrange,
+                    ),
+                    SizedBox(
+                      height: 16,
+                    ),
+                    Text(
+                      "Sem To-Do's por aqui!",
+                      style: TextStyle(fontStyle: FontStyle.italic),
+                    )
+                  ],
+                );
+              else {
+                return Column(
+                  children: <Widget>[_tabBar(context), _body()],
+                );
+              }
+            },
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 
-  _onInit(List<Todo> todos) {
-    List<Todo> itemsOfToday = todos.where((todo) {
-      DateTime todoDate = todo.inicio;
-
-      //todo Trocar por DateTime.now()
-      DateTime todayDate = DateTime(2020, 2, 7);
-      return todayDate.year == todoDate.year
-          ? todayDate.month == todoDate.month
-              ? todayDate.day == todoDate.day
-              : false
-          : false;
-    }).toList();
-
-    List<Todo> itemsOfWeek = todos.where((todo) {
-      DateTime todoDate = todo.inicio;
-
-      //todo Trocar por DateTime.now()
-      DateTime todayDate = DateTime(2020, 2, 7);
-      return todoDate.difference(todayDate).inDays < 7;
-    }).toList();
-
-    _sections[0] = {
-      "items": groupByTime(sortTodoList(itemsOfToday)),
-      "parser": timeParser
-    };
-    _sections[1] = {
-      "items": groupByWeek(sortTodoList(itemsOfWeek)),
-      "parser": weekParser
-    };
-    _sections[2] = {
-      "items": groupByMonth(sortTodoList(todos)),
-      "parser": monthParser
-    };
-  }
-
-  _tabs() {
+  _tabs(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Container(
@@ -148,57 +119,67 @@ class _SectionScreenState extends State<SectionScreen> {
               ],
             ),
           ),
-          AnimatedContainer(
-            duration: Duration(milliseconds: 200),
-            curve: Curves.easeIn,
-            alignment: page == 0
-                ? Alignment.centerLeft
-                : page == 1 ? Alignment.center : Alignment.centerRight,
-            child: Container(
-              margin: EdgeInsets.only(top: 4),
-              decoration: BoxDecoration(
-                  color: Color(0xFFE3E2E5),
-                  borderRadius: BorderRadius.circular(50)),
-              width: page == 1 ? 50 : 80,
-              height: 2,
-            ),
+          Observer(
+            builder: (_) {
+              int _page = _pageViewController.page;
+              return AnimatedContainer(
+                duration: Duration(milliseconds: 200),
+                curve: Curves.easeIn,
+                alignment: _page == 0
+                    ? Alignment.centerLeft
+                    : _page == 1 ? Alignment.center : Alignment.centerRight,
+                child: Container(
+                  margin: EdgeInsets.only(top: 4),
+                  decoration: BoxDecoration(
+                      color: Color(0xFFE3E2E5),
+                      borderRadius: BorderRadius.circular(50)),
+                  width: _page == 1 ? 80 : 50,
+                  height: 2,
+                ),
+              );
+            },
           )
         ],
       ),
     );
   }
 
-  _tabBar() {
+  _tabBar(BuildContext context) {
     return Column(
-      children: <Widget>[_tabs(), _indicator()],
+      children: <Widget>[_tabs(context), _indicator()],
     );
   }
 
   _body() {
     return Expanded(
-      child: PageView(
-        onPageChanged: (value) {
-          setState(() {
-            page = value;
-          });
+      child: Observer(
+        builder: (_) {
+          return PageView(
+            onPageChanged: (value) => _pageViewController.changePage(value),
+            controller: _pageController,
+            children: _todoController.sections.keys.map<Widget>((index) {
+              return Observer(
+                builder: (_) {
+                  Map<dynamic, List<Todo>> items =
+                      _todoController.sections[index]["items"];
+                  Function parser = _todoController.sections[index]["parser"];
+                  return ListView(
+                      padding: const EdgeInsets.all(20),
+                      children: items.keys.map<Widget>((key) {
+                        return fieldTask(
+                            headTime: parser(key),
+                            hasNext: !(items.keys.last == key),
+                            items: items[key]
+                                .map((todo) => CustomCard(
+                                      todo: todo,
+                                    ))
+                                .toList());
+                      }).toList());
+                },
+              );
+            }).toList(),
+          );
         },
-        controller: _pageController,
-        children: _sections.keys.map<Widget>((index) {
-          Map<dynamic, List<Todo>> items = _sections[index]["items"];
-          Function parser = _sections[index]["parser"];
-          return ListView(
-              padding: const EdgeInsets.all(20),
-              children: items.keys.map<Widget>((key) {
-                return fieldTask(
-                    headTime: parser(key),
-                    hasNext: !(items.keys.last == key),
-                    items: items[key]
-                        .map((todo) => CustomCard(
-                              todo: todo,
-                            ))
-                        .toList());
-              }).toList());
-        }).toList(),
       ),
     );
   }

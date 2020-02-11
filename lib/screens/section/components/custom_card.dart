@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:todo_app/controllers/todo_controller.dart';
 import 'package:todo_app/customs/custom_dialog.dart';
 import 'package:todo_app/customs/custom_ink_well.dart';
 import 'package:todo_app/customs/custom_raised_button.dart';
@@ -6,10 +8,7 @@ import 'package:todo_app/models/todo_model.dart';
 
 class CustomCard extends StatelessWidget {
   final Todo todo;
-  final bool isCompleted;
-
-  const CustomCard({Key key, this.todo, this.isCompleted: false})
-      : super(key: key);
+  const CustomCard({Key key, this.todo}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +25,7 @@ class CustomCard extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                  decoration: isCompleted
+                  decoration: todo.completed
                       ? TextDecoration.lineThrough
                       : TextDecoration.none,
                   fontSize: 14,
@@ -41,7 +40,7 @@ class CustomCard extends StatelessWidget {
   _decoration() {
     return BoxDecoration(
         borderRadius: BorderRadius.circular(5),
-        gradient: isCompleted
+        gradient: todo.completed
             ? LinearGradient(
                 colors: [Color(0xFF433977), Color(0xFF534C76)],
                 stops: [0.2, 0.8],
@@ -53,6 +52,7 @@ class CustomCard extends StatelessWidget {
   }
 
   _showTodo(BuildContext context, {Todo todo}) {
+    final TodoController _todoController = GetIt.I.get<TodoController>();
     showDialog(
         context: context,
         child: CustomDialog(
@@ -87,7 +87,7 @@ class CustomCard extends StatelessWidget {
                     style: TextStyle(fontWeight: FontWeight.w600),
                   ),
                   GestureDetector(
-                    onTap: () => todo.completed = !todo.completed,
+                    onTap: () => _todoController.changeCompleted(todo),
                     child: Switch(
                       activeColor: Colors.red,
                       value: todo.completed,

@@ -38,6 +38,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
                 onPressed: () {
                   if (_category == 0) {
                     _todoController.insertTodo(_addTodoItemController.toObject);
+                    _todoController.onInit();
                   }
                   Navigator.pop(context);
                 });

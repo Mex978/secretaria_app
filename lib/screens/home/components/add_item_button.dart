@@ -7,6 +7,7 @@ class AddItemButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: double.infinity,
+      width: double.infinity,
       child: Container(
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),

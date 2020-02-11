@@ -13,7 +13,7 @@ abstract class _AddTodoItemControllerBase with Store {
   String description;
 
   @observable
-  DateTime date;
+  DateTime date = DateTime.now();
 
   @computed
   bool get validate => title != null && date != null;

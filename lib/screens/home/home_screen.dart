@@ -72,12 +72,8 @@ class HomeScreen extends StatelessWidget {
                     onPressed: () {},
                   ),
                 ),
-                Container(
-                  child: Center(
-                    child: Row(
-                      children: <Widget>[AddItemButton()],
-                    ),
-                  ),
+                Center(
+                  child: AddItemButton(),
                 )
               ],
             ),
